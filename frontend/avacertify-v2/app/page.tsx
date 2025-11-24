@@ -26,10 +26,10 @@ export default function Home() {
         <div className="container relative z-10 mx-auto text-center">
           <div className="mx-auto max-w-3xl">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Join the Future of Credentialing with AvaCertify
+              Dada Devs Digital Certificates
             </h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              Experience secure, tamper-proof, and verifiable digital credentials on Avalanche.
+              Secure, blockchain-verified digital credentials for our graduates
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Button asChild size="lg" className="rounded-full">

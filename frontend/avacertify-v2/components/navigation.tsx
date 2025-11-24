@@ -48,7 +48,7 @@ export function Navigation() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             />
-            <span className="font-bold text-xl bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">AvaCertify</span>
+            <span className="font-bold text-xl bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Dada Devs</span>
           </Link>
           <nav className="hidden md:flex space-x-1">
             {navItems.map((item) => (

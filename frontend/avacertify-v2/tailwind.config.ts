@@ -73,7 +73,12 @@ const config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+  			'dada-orange': '#FF6B35',
+  			'dada-orange-light': '#FF8C42',
+  			'dada-orange-lighter': '#FFB88C',
+  			'dada-white': '#FFF8F0',
+  			'dada-dark': '#2C2C2C'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
