@@ -69,14 +69,14 @@ export class CertificateService {
         }
     }
 
-    async issueCertificate(recipientName: string): Promise<string | null> {
+    async issueCertificate(recipientName: string, ownerAddress: string): Promise<string | null> {
         if (!this.contract) {
             console.warn('Contract not initialized');
             return null;
         }
 
         try {
-            const tx = await this.contract.issueCertificate(recipientName);
+            const tx = await this.contract.issueCertificate(recipientName, ownerAddress);
             const receipt = await tx.wait();
 
             const event = receipt.events?.find((e: { event: string; }) => e.event === 'CertificateIssued');

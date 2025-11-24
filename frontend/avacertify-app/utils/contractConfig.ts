@@ -15,10 +15,9 @@ export const AVALANCHE_FUJI_CONFIG = {
     blockExplorerUrls: ['https://testnet.snowtrace.io/']
 };
     // Contract details
-export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3" //"0x0983Ef28Dc99E06D96f3a0CBCc4B3F74cd4404b0"; // Replace with your deployed contract address
+// Use the deployed CertificateIssuanceSystem contract on Fuji
+export const CONTRACT_ADDRESS = "0xb90c5B3fE62f463AF697B6bC53ac579b0B2f0F2A"
 export const CONTRACT_ABI = [
-    // Replace with your contract's ABI
-
     {
 			"inputs": [],
 			"stateMutability": "nonpayable",
@@ -28,11 +27,11 @@ export const CONTRACT_ABI = [
 			"inputs": [
 				{
 					"internalType": "address",
-					"name": "owner",
+					"name": "target",
 					"type": "address"
 				}
 			],
-			"name": "OwnableInvalidOwner",
+			"name": "AddressEmptyCode",
 			"type": "error"
 		},
 		{
@@ -43,9 +42,20 @@ export const CONTRACT_ABI = [
 					"type": "address"
 				}
 			],
-			"name": "OwnableUnauthorizedAccount",
+			"name": "AddressInsufficientBalance",
 			"type": "error"
 		},
+		{
+			"inputs": [],
+			"name": "FailedInnerCall",
+			"type": "error"
+		},
+		{
+			"inputs": [],
+			"name": "ReentrancyGuardReentrantCall",
+			"type": "error"
+		},
+
 		{
 			"anonymous": false,
 			"inputs": [
@@ -66,6 +76,12 @@ export const CONTRACT_ABI = [
 					"internalType": "uint256",
 					"name": "issueDate",
 					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
 				}
 			],
 			"name": "CertificateIssued",
@@ -94,13 +110,19 @@ export const CONTRACT_ABI = [
 					"type": "uint256"
 				},
 				{
-					"indexed": false,
-					"internalType": "bool",
-					"name": "isValid",
-					"type": "bool"
+					"indexed": true,
+					"internalType": "address",
+					"name": "from",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
 				}
 			],
-			"name": "CertificateVerified",
+			"name": "CertificateTransferred",
 			"type": "event"
 		},
 		{
@@ -108,18 +130,24 @@ export const CONTRACT_ABI = [
 			"inputs": [
 				{
 					"indexed": false,
-					"internalType": "uint256",
-					"name": "oldLimit",
-					"type": "uint256"
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
 				},
 				{
-					"indexed": false,
-					"internalType": "uint256",
-					"name": "newLimit",
-					"type": "uint256"
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "previousAdminRole",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "newAdminRole",
+					"type": "bytes32"
 				}
 			],
-			"name": "GasLimitUpdated",
+			"name": "RoleAdminChanged",
 			"type": "event"
 		},
 		{
@@ -127,28 +155,85 @@ export const CONTRACT_ABI = [
 			"inputs": [
 				{
 					"indexed": true,
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
 					"internalType": "address",
-					"name": "previousOwner",
+					"name": "account",
 					"type": "address"
 				},
 				{
 					"indexed": true,
 					"internalType": "address",
-					"name": "newOwner",
+					"name": "sender",
 					"type": "address"
 				}
 			],
-			"name": "OwnershipTransferred",
+			"name": "RoleGranted",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "sender",
+					"type": "address"
+				}
+			],
+			"name": "RoleRevoked",
 			"type": "event"
 		},
 		{
 			"inputs": [],
-			"name": "gasLimit",
+			"name": "ADMIN_ROLE",
 			"outputs": [
 				{
-					"internalType": "uint256",
+					"internalType": "bytes32",
 					"name": "",
-					"type": "uint256"
+					"type": "bytes32"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "DEFAULT_ADMIN_ROLE",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "ISSUER_ROLE",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
 				}
 			],
 			"stateMutability": "view",
@@ -157,39 +242,111 @@ export const CONTRACT_ABI = [
 		{
 			"inputs": [
 				{
+					"internalType": "address",
+					"name": "_issuer",
+					"type": "address"
+				}
+			],
+			"name": "addIssuer",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
 					"internalType": "uint256",
-					"name": "_certificateId",
+					"name": "",
 					"type": "uint256"
 				}
 			],
-			"name": "getCertificate",
+			"name": "certificates",
 			"outputs": [
 				{
-					"components": [
-						{
-							"internalType": "uint256",
-							"name": "id",
-							"type": "uint256"
-						},
-						{
-							"internalType": "string",
-							"name": "recipientName",
-							"type": "string"
-						},
-						{
-							"internalType": "uint256",
-							"name": "issueDate",
-							"type": "uint256"
-						},
-						{
-							"internalType": "bool",
-							"name": "isValid",
-							"type": "bool"
-						}
-					],
-					"internalType": "struct CertificateIssuanceSystem.Certificate",
+					"internalType": "uint256",
+					"name": "id",
+					"type": "uint256"
+				},
+				{
+					"internalType": "string",
+					"name": "recipientName",
+					"type": "string"
+				},
+				{
+					"internalType": "uint256",
+					"name": "issueDate",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bool",
+					"name": "isValid",
+					"type": "bool"
+				},
+				{
+					"internalType": "address",
+					"name": "owner",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				}
+			],
+			"name": "getRoleAdmin",
+			"outputs": [
+				{
+					"internalType": "bytes32",
 					"name": "",
-					"type": "tuple"
+					"type": "bytes32"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "grantRole",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
+				}
+			],
+			"name": "hasRole",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
 				}
 			],
 			"stateMutability": "view",
@@ -201,6 +358,11 @@ export const CONTRACT_ABI = [
 					"internalType": "string",
 					"name": "_recipientName",
 					"type": "string"
+				},
+				{
+					"internalType": "address",
+					"name": "_owner",
+					"type": "address"
 				}
 			],
 			"name": "issueCertificate",
@@ -209,21 +371,32 @@ export const CONTRACT_ABI = [
 			"type": "function"
 		},
 		{
-			"inputs": [],
-			"name": "owner",
-			"outputs": [
+			"inputs": [
 				{
 					"internalType": "address",
-					"name": "",
+					"name": "_issuer",
 					"type": "address"
 				}
 			],
-			"stateMutability": "view",
+			"name": "removeIssuer",
+			"outputs": [],
+			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
-			"inputs": [],
-			"name": "renounceOwnership",
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "callerConfirmation",
+					"type": "address"
+				}
+			],
+			"name": "renounceRole",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
@@ -244,12 +417,17 @@ export const CONTRACT_ABI = [
 		{
 			"inputs": [
 				{
-					"internalType": "uint256",
-					"name": "_newLimit",
-					"type": "uint256"
+					"internalType": "bytes32",
+					"name": "role",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "account",
+					"type": "address"
 				}
 			],
-			"name": "setGasLimit",
+			"name": "revokeRole",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
@@ -257,34 +435,58 @@ export const CONTRACT_ABI = [
 		{
 			"inputs": [
 				{
+					"internalType": "bytes4",
+					"name": "interfaceId",
+					"type": "bytes4"
+				}
+			],
+			"name": "supportsInterface",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_certificateId",
+					"type": "uint256"
+				},
+				{
 					"internalType": "address",
-					"name": "newOwner",
+					"name": "_to",
 					"type": "address"
 				}
 			],
-			"name": "transferOwnership",
+			"name": "transferCertificate",
 			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_certificateId",
-                "type": "uint256"
-            }
-        ],
-        "name": "verifyCertificate",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    }
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_certificateId",
+					"type": "uint256"
+				}
+			],
+			"name": "verifyCertificate",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
 ];
 
