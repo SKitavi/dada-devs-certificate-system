@@ -6,8 +6,9 @@ export const ContractStatus: React.FC = () => {
     const [status, setStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected');
     // const [error, setError] = useState<string | null>(null);
     const [address, setAddress] = useState<string | null>(null);
-    const [storedValue, setStoredValue] = useState<string | null>(null);
-    const [inputValue, setInputValue] = useState("");
+    // Unused state - can be removed or used later
+    // const [storedValue, setStoredValue] = useState<string | null>(null);
+    // const [inputValue, setInputValue] = useState("");
 
     useEffect(() => {
         checkConnection();
@@ -38,17 +39,14 @@ export const ContractStatus: React.FC = () => {
         }
     };
 
-    const retrieveValue = async () => {
-        try {
-            const contract = await getContract();
-            if (contract) {
-                const value = await contract.retrieve();
-                setStoredValue(value.toString());
-            }
-        } catch (error) {
-            console.error("Error retrieving value:", error);
-        }
-    };
+    // Unused function - can be removed or implemented later
+    // const retrieveValue = async () => {
+    //     try {
+    //         // Implementation needed
+    //     } catch (error) {
+    //         console.error("Error retrieving value:", error);
+    //     }
+    // };
 
     return (
         <div className="mb-4 p-4 rounded-lg bg-gray-50">
