@@ -82,12 +82,12 @@ export default function Navbar({ isWaitlisted }: NavbarProps) {
   
   
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white shadow-md border-b-2 border-dada-orange">
       {/*Logo*/} 
       <div className="flex items-center">
         <div className="flex-shrink-0 flex items-center px-4 py-4">
           <Link href="/">
-            <span className="text-2xl font-bold text-blue-600">AvaCertify</span>
+            <span className="text-2xl font-bold text-dada-orange">Dada Devs</span>
           </Link>
         </div>
           {/*nav-container*/}
@@ -105,8 +105,8 @@ export default function Navbar({ isWaitlisted }: NavbarProps) {
                     }
                   }}
                   className={`${pathname === item.href
-                      ? 'border-blue-600 text-gray-900'
-                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                      ? 'border-dada-orange text-dada-dark'
+                      : 'border-transparent text-gray-500 hover:border-dada-orange-light hover:text-dada-dark'
                     } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                 >
                   <item.icon className="h-5 w-5 mr-1" />
@@ -117,7 +117,7 @@ export default function Navbar({ isWaitlisted }: NavbarProps) {
               <button
                 onClick={connectWallet}
                 disabled={isConnecting}
-                className="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+                className="inline-flex items-center bg-dada-orange text-white px-4 py-2 rounded hover:bg-dada-orange-light transition-colors disabled:bg-dada-orange-lighter"
               >
                 <Wallet className="h-5 w-5 mr-2" />
                 {isConnecting

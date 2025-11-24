@@ -43,7 +43,7 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-white to-blue-600 text-gray-800">
+    <div className="min-h-screen bg-dada-white text-dada-dark">
 
       {/* Main container with gradient background */}
       <Navbar isWaitlisted={isWaitlisted} /> {/* Navbar component with waitlist status prop */}
@@ -53,20 +53,20 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           {/* Centered content container */}
           <motion.h1
-            className="text-5xl md:text-6xl font-bold mb-6"
+            className="text-5xl md:text-6xl font-bold mb-6 text-dada-orange"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Join the Future of Credentialing with AvaCertify
+            Dada Devs Digital Certificates
           </motion.h1>
           <motion.p
-            className="text-xl mb-8"
+            className="text-xl mb-8 text-dada-dark"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Experience secure, tamper-proof, and verifiable digital credentials on Avalanche.
+            Secure, blockchain-verified digital credentials for our graduates
           </motion.p>
           <motion.div
             className="flex justify-center space-x-4 mb-12"
@@ -74,13 +74,13 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-semibold">
+            <span className="bg-dada-orange text-white px-4 py-2 rounded-full font-semibold">
               Secure
             </span>
-            <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full font-semibold">
+            <span className="bg-dada-orange-light text-white px-4 py-2 rounded-full font-semibold">
               Transparent
             </span>
-            <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full font-semibold">
+            <span className="bg-dada-orange-lighter text-white px-4 py-2 rounded-full font-semibold">
               Verifiable
             </span>
           </motion.div>
@@ -137,7 +137,7 @@ export default function Home() {
               </div>
               <motion.button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+                className="w-full bg-dada-orange text-white py-2 rounded hover:bg-dada-orange-light transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
