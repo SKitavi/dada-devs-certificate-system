@@ -54,18 +54,18 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <FeatureCard
               icon={Shield}
-              title="Secure"
-              description="Leveraging blockchain technology for immutable and tamper-proof certificate storage."
+              title="Unique Certificate IDs"
+              description="Every certificate gets a unique ID (dd-cert-xxxxx) that cannot be duplicated or forged."
             />
             <FeatureCard
               icon={Eye}
-              title="Transparent"
-              description="Public verification eliminates trust issues with on-chain data instantly accessible."
+              title="SHA-256 Digital Signatures"
+              description="Tamper-proof cryptographic signatures ensure certificate authenticity and detect any modifications."
             />
             <FeatureCard
               icon={CheckCircle}
-              title="Verifiable"
-              description="Instant verification without reliance on intermediaries, reducing fraud and inefficiencies."
+              title="QR Code Verification"
+              description="Instant verification via QR codes that link to our verification system - scan and verify immediately."
             />
           </div>
         </div>

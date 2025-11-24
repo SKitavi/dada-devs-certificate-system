@@ -1,0 +1,28 @@
+[build]
+  # Build command for the frontend only
+  command = "cd frontend/avacertify-v2 && npm ci && npm run build"
+  # Directory to publish (Next.js static export)
+  publish = "frontend/avacertify-v2/out"
+  # Base directory for build
+  base = "frontend/avacertify-v2"
+
+[build.environment]
+  # Enable recursive submodule fetching
+  GIT_SUBMODULE_STRATEGY = "recursive"
+  # Node.js version
+  NODE_VERSION = "18"
+
+# Redirect rules for Next.js
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
