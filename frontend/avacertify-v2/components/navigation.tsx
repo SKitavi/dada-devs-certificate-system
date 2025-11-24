@@ -41,14 +41,18 @@ export function Navigation() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
-            <motion.img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Avacerify%20logo-3L4whQx9hWLHOgiWk6KoYufLDWSfgE.webp"
-              alt="AvaCertify Logo"
-              className="h-8 w-8"
+            <motion.div
+              className="text-2xl font-bold"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-            />
-            <span className="font-bold text-xl bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Dada Devs</span>
+            >
+              <span className="text-dada-orange">&lt;/</span>
+              <span className="text-yellow-500">&gt;</span>
+            </motion.div>
+            <div className="flex flex-col">
+              <span className="font-bold text-xl text-dada-orange">Dada Devs</span>
+              <span className="text-xs text-dada-orange/70">Buidl for Africa</span>
+            </div>
           </Link>
           <nav className="hidden md:flex space-x-1">
             {navItems.map((item) => (

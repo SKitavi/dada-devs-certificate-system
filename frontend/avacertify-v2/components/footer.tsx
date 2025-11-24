@@ -4,11 +4,9 @@ import { motion } from "framer-motion"
 import { Github, Linkedin, Mail } from "lucide-react"
 
 const socialLinks = [
-  /*{ name: "Twitter", icon: Twitter, href: "https://twitter.com/avacertify" }, */
-  { name: "GitHub", icon: Github, href: "https://github.com/Avalanche-Team1-Africa/Certificate-Issuance-System" },
-  { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/avacertify/" },
-  /* { name: "Discord", icon: Discord, href: "https://discord.gg/avacertify" }, */
-  { name: "Email", icon: Mail, href: "mailto:avacertify@gmail.com.com" },
+  { name: "GitHub", icon: Github, href: "https://github.com/dadaDevs" },
+  { name: "LinkedIn", icon: Linkedin, href: "https://www.linkedin.com/company/dada-devs/" },
+  { name: "Email", icon: Mail, href: "mailto:hello@dadadevs.com" },
 ]
 
 export function Footer() {
@@ -97,7 +95,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-8 text-center">
-          <p className="text-sm text-foreground/60">© {new Date().getFullYear()} AvaCertify. All rights reserved.</p>
+          <p className="text-sm text-foreground/60">© {new Date().getFullYear()} <span className="text-dada-orange font-semibold">Dada Devs</span>. All rights reserved.</p>
         </div>
       </div>
     </footer>

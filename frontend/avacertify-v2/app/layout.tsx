@@ -8,8 +8,8 @@ import type React from "react"
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AvaCertify - Decentralized Certificate Verification",
-  description: "Secure certificate verification on the Avalanche blockchain",
+  title: "Dada Devs - Building Africa's First Pipeline of Female Bitcoin Engineers",
+  description: "Secure, blockchain-verified digital credentials for African female Bitcoin developers",
 }
 
 export default function RootLayout({

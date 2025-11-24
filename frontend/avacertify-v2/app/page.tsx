@@ -26,10 +26,10 @@ export default function Home() {
         <div className="container relative z-10 mx-auto text-center">
           <div className="mx-auto max-w-3xl">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Dada Devs Digital Certificates
+              <span className="text-dada-orange">Dada Devs</span> Digital Certificates
             </h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              Secure, blockchain-verified digital credentials for our graduates
+              Secure, blockchain-verified digital credentials for African female Bitcoin developers
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Button asChild size="lg" className="rounded-full">
@@ -50,7 +50,7 @@ export default function Home() {
 
   <section id="features" className="py-20">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-12 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Key Features</h2>
+          <h2 className="text-3xl font-bold mb-12 bg-gradient-to-r from-dada-orange to-yellow-500 bg-clip-text text-transparent">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <FeatureCard
               icon={Shield}
@@ -111,9 +111,9 @@ export default function Home() {
       <section id="security" className="py-20 bg-gradient-to-br from-primary/10 to-secondary/5">
         <div className="container mx-auto text-center">
           <div className="max-w-3xl mx-auto text-white">
-            <h2 className="text-3xl text-primary font-bold mb-6">Ready to Get Started?</h2>
+            <h2 className="text-3xl text-dada-orange font-bold mb-6">Ready to Get Started?</h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Join the future of secure, efficient certificate management and verification.
+              Join Africa's first pipeline of female Bitcoin developers and earn verified credentials.
             </p>
             <Button asChild size="lg" className="rounded-full group">
               <Link href="/dashboard">
@@ -128,9 +128,9 @@ export default function Home() {
       {/* Pricing section inserted so footer /pricing anchor has a target */}
       <section id="pricing" className="py-20">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Pricing</h2>
+          <h2 className="text-3xl font-bold mb-6 text-dada-orange">Pricing</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            AvaCertify is currently in early access. Pricing will be published shortly. For pilot programs and enterprise plans, contact us via the Connect section.
+            Dada Devs certificate platform is currently in development. For partnership opportunities and program enrollment, contact us via the Connect section.
           </p>
         </div>
       </section>
