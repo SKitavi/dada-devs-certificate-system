@@ -7,11 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload, CheckCircle } from "lucide-react";
+import { Loader2, Upload, CheckCircle, Download } from "lucide-react";
 import { certificateService, Certificate } from "@/utils/blockchain";
 import { IPFSService } from "@/utils/ipfsService";
 import { CERTIFICATE_SYSTEM_ADDRESS, NFT_CERTIFICATE_ADDRESS, AVALANCHE_FUJI_CONFIG } from "@/utils/contractConfig";
 import { ethers } from "ethers";
+import {
+  generateCertificateId,
+  generateSignature,
+  generateCertificatePDF,
+  storeCertificateHash,
+  type CertificateData,
+  type CertificateWithSignature,
+} from "@/utils/certificateGenerator";
 
 interface UploadState {
     isUploading: boolean;
@@ -44,14 +52,26 @@ export default function AdminPage() {
     const [formData, setFormData] = useState({
         recipientAddress: "",
         recipientName: "",
+        cohort: "",
+        email: "",
         certificateType: "",
+        courseTitle: "",
         issueDate: "",
-        institutionName: "AvaCertify",
+        institutionName: "Dada Devs",
         logoUrl: "",
-        brandColor: "#FFFFFF",
+        brandColor: "#FF6B35",
     });
+    const [previewCert, setPreviewCert] = useState<CertificateWithSignature | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
     const { toast } = useToast();
-    const ipfsService = new IPFSService();
+    const [ipfsService] = useState(() => {
+        try {
+            return new IPFSService();
+        } catch (error) {
+            console.warn("IPFS service not available:", error);
+            return null;
+        }
+    });
 
     useEffect(() => {
         const checkExistingConnection = async () => {
@@ -159,12 +179,22 @@ export default function AdminPage() {
 
         setUploadState((prev) => ({ ...prev, isUploading: true }));
 
+        if (!ipfsService) {
+            toast({
+                title: "IPFS Not Available",
+                description: "IPFS service is not configured. File upload is disabled.",
+                variant: "destructive",
+            });
+            setUploadState((prev) => ({ ...prev, isUploading: false }));
+            return;
+        }
+
         try {
             const documentHash = await ipfsService.uploadFile(file);
             const documentUrl = ipfsService.getGatewayUrl(documentHash);
             const metadata = ipfsService.generateMetadata(
                 formData.certificateType || "Certificate",
-                "Certificate issued by AvaCertify",
+                "Certificate issued by Dada Devs",
                 documentHash,
                 formData.brandColor,
                 formData.institutionName
@@ -225,123 +255,105 @@ export default function AdminPage() {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        if (!walletState.isConnected) {
-            toast({
-                title: "Wallet Not Connected",
-                description: "Please connect your wallet before issuing a certificate",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        if (!formData.recipientAddress || !formData.recipientName || !formData.certificateType || !formData.issueDate) {
-            toast({
-                title: "Missing Information",
-                description: "Please fill in all required fields",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        if (!ethers.isAddress(formData.recipientAddress)) {
-            toast({
-                title: "Invalid Address",
-                description: "Please enter a valid Ethereum address",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        if (isNFT && !isRegistered) {
-            toast({
-                title: "Organization Not Registered",
-                description: "Please register your organization before issuing NFT certificates",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        setIsIssuing(true);
+        setIsGenerating(true);
 
         try {
-            await checkNetwork();
+            if (!walletState.isConnected) {
+                toast({
+                    title: "Wallet Not Connected",
+                    description: "Please connect your wallet before issuing a certificate",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            if (!formData.recipientName || !formData.cohort || !formData.email) {
+                toast({
+                    title: "Missing Information",
+                    description: "Please fill in all required fields",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            // Generate certificate ID
+            const certId = generateCertificateId();
+
+            // Create certificate data
+            const certData: CertificateData = {
+                certificateId: certId,
+                studentName: formData.recipientName,
+                cohort: formData.cohort,
+                email: formData.email,
+                issueDate: new Date(),
+                issuerName: 'Dada Devs',
+                courseTitle: formData.courseTitle || undefined,
+            };
+
+            // Generate digital signature
+            const signature = generateSignature(certData);
+
+            // Issue certificate on blockchain
             toast({
                 title: "Transaction Pending",
                 description: "Please confirm the transaction in your wallet",
             });
 
-            let certificateId: string;
-            if (isNFT) {
-                const metadata = ipfsService.generateMetadata(
-                    formData.certificateType,
-                    "Certificate issued by AvaCertify",
-                    uploadState.documentHash,
-                    formData.brandColor,
-                    formData.institutionName
-                );
-                const metadataHash = await ipfsService.uploadJSON(metadata);
-                certificateId = await certificateService.mintNFTCertificate(formData.recipientAddress, ipfsService.getGatewayUrl(metadataHash));
-            } else {
-                certificateId = await certificateService.issueCertificate(formData.recipientName, formData.recipientAddress);
+            const blockchainId = await certificateService.issueCertificate(
+                formData.recipientName, 
+                formData.recipientAddress || walletState.address || ""
+            );
+            
+            if (!blockchainId) {
+                throw new Error("Failed to issue certificate on blockchain");
             }
-
-            if (!certificateId) {
-                throw new Error("Failed to retrieve certificate ID");
-            }
-
-            const newCertificate: Certificate = {
-                id: certificateId,
-                certificateId,
-                recipientName: formData.recipientName,
-                recipientAddress: formData.recipientAddress,
-                certificateType: formData.certificateType,
-                issueDate: formData.issueDate,
-                institutionName: formData.institutionName,
-                status: "active",
-                documentHash: uploadState.documentHash,
-                documentUrl: uploadState.documentUrl,
-                isNFT,
-            };
-
-            const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]") as Certificate[];
-            storedCertificates.push(newCertificate);
-            localStorage.setItem("certificates", JSON.stringify(storedCertificates));
 
             toast({
-                title: isNFT ? "NFT Certificate Issued" : "Certificate Issued",
-                description: `Certificate ${certificateId} issued successfully to ${formData.recipientName}`,
+                title: "Certificate Issued",
+                description: "Certificate issued on blockchain successfully!",
             });
 
+            // Create full certificate with signature
+            const fullCert: CertificateWithSignature = {
+                ...certData,
+                digitalSignature: signature,
+                qrCodeData: `${window.location.origin}/verify/${certId}`,
+                isValid: true,
+                blockchainTxHash: blockchainId,
+            };
+
+            // Store certificate hash locally
+            storeCertificateHash(certId, signature, certData);
+
+            // Set preview
+            setPreviewCert(fullCert);
+
+            toast({
+                title: "Certificate Generated",
+                description: `Certificate ${certId} generated successfully!`,
+            });
+
+            // Reset form
             setFormData({
                 recipientAddress: "",
                 recipientName: "",
+                cohort: "",
+                email: "",
                 certificateType: "",
+                courseTitle: "",
                 issueDate: "",
-                institutionName: "AvaCertify",
+                institutionName: "Dada Devs",
                 logoUrl: "",
-                brandColor: "#FFFFFF",
+                brandColor: "#FF6B35",
             });
-            setUploadState({
-                isUploading: false,
-                documentHash: "",
-                metadataHash: "",
-                documentUrl: "",
-            });
-            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-            if (fileInput) fileInput.value = "";
         } catch (error: any) {
-            let message = isNFT ? "Failed to mint NFT certificate" : "Failed to issue certificate";
+            let message = "Failed to issue certificate";
             if (error.code === "ACTION_REJECTED" || error.code === 4001) {
                 message = "User rejected the transaction";
             } else if (error.message?.includes("insufficient funds")) {
                 message = "Insufficient AVAX for gas fees. Get test AVAX from faucet.";
             } else if (error.message?.includes("network")) {
                 message = "Please ensure you're connected to the Avalanche Fuji Testnet";
-            } else if (error.message?.includes("not authorized")) {
-                message = "Wallet not authorized to issue certificates. Contact admin.";
-            } else if (error.message?.includes("not registered")) {
-                message = "Organization not registered. Please register first.";
             }
             toast({
                 title: "Error",
@@ -349,7 +361,42 @@ export default function AdminPage() {
                 variant: "destructive",
             });
         } finally {
-            setIsIssuing(false);
+            setIsGenerating(false);
+        }
+    };
+
+    const handleDownloadPDF = async () => {
+        if (!previewCert) return;
+
+        try {
+            toast({
+                title: "Generating PDF",
+                description: "Creating certificate PDF...",
+            });
+            
+            const pdfBlob = await generateCertificatePDF(previewCert);
+            
+            // Create download link
+            const url = URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `DadaDevs_Certificate_${previewCert.studentName.replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            toast({
+                title: "PDF Downloaded",
+                description: "Certificate PDF downloaded successfully!",
+            });
+        } catch (error) {
+            toast({
+                title: "Download Failed",
+                description: "Failed to generate PDF certificate",
+                variant: "destructive",
+            });
+            console.error(error);
         }
     };
 
@@ -420,120 +467,143 @@ export default function AdminPage() {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Issue New Certificate</CardTitle>
+                            <CardTitle>Issue Dada Devs Certificate</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label>Certificate Type</Label>
-                                    <div className="flex space-x-4">
-                                        <Button
-                                            type="button"
-                                            variant={isNFT ? "outline" : "default"}
-                                            onClick={() => setIsNFT(false)}
-                                        >
-                                            Standard Certificate
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            variant={isNFT ? "default" : "outline"}
-                                            onClick={() => setIsNFT(true)}
-                                        >
-                                            NFT Certificate
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="document">Certificate Document (Optional)</Label>
-                                    <Input
-                                        id="document"
-                                        type="file"
-                                        accept="application/pdf,image/*"
-                                        onChange={handleFileUpload}
-                                        disabled={uploadState.isUploading}
-                                    />
-                                    {uploadState.isUploading && (
-                                        <div className="flex items-center mt-2">
-                                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                            <p className="text-sm">Uploading to IPFS...</p>
-                                        </div>
-                                    )}
-                                    {uploadState.documentHash && (
-                                        <div className="mt-2 p-2 bg-green-50 rounded border flex items-center">
-                                            <CheckCircle className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
-                                            <div className="text-sm">
-                                                <p className="text-green-700">File uploaded successfully</p>
-                                                <p className="text-muted-foreground text-xs">IPFS Hash: {uploadState.documentHash}</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="recipientAddress">Recipient Address *</Label>
-                                    <Input
-                                        id="recipientAddress"
-                                        value={formData.recipientAddress}
-                                        onChange={(e) => handleInputChange("recipientAddress", e.target.value)}
-                                        placeholder="0x..."
-                                        required
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="recipientName">Recipient Name *</Label>
+                                    <Label htmlFor="recipientName">Student Name *</Label>
                                     <Input
                                         id="recipientName"
                                         value={formData.recipientName}
                                         onChange={(e) => handleInputChange("recipientName", e.target.value)}
-                                        placeholder="Full name of certificate recipient"
+                                        placeholder="John Doe"
                                         required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="certificateType">Certificate Type *</Label>
+                                    <Label htmlFor="email">Email *</Label>
                                     <Input
-                                        id="certificateType"
-                                        value={formData.certificateType}
-                                        onChange={(e) => handleInputChange("certificateType", e.target.value)}
-                                        placeholder="e.g., Bachelor of Science, Professional Certificate"
+                                        id="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => handleInputChange("email", e.target.value)}
+                                        placeholder="john@example.com"
                                         required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="issueDate">Issue Date *</Label>
+                                    <Label htmlFor="cohort">Cohort *</Label>
                                     <Input
-                                        type="date"
-                                        id="issueDate"
-                                        value={formData.issueDate}
-                                        onChange={(e) => handleInputChange("issueDate", e.target.value)}
+                                        id="cohort"
+                                        value={formData.cohort}
+                                        onChange={(e) => handleInputChange("cohort", e.target.value)}
+                                        placeholder="Web3 Bootcamp 2024"
                                         required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="courseTitle">Course Title (Optional)</Label>
+                                    <Input
+                                        id="courseTitle"
+                                        value={formData.courseTitle}
+                                        onChange={(e) => handleInputChange("courseTitle", e.target.value)}
+                                        placeholder="Blockchain Development Fundamentals"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="recipientAddress">Recipient Address (Optional)</Label>
+                                    <Input
+                                        id="recipientAddress"
+                                        value={formData.recipientAddress}
+                                        onChange={(e) => handleInputChange("recipientAddress", e.target.value)}
+                                        placeholder="0x... (defaults to connected wallet)"
                                     />
                                 </div>
 
                                 <Button
                                     type="submit"
-                                    disabled={isIssuing || !walletState.isConnected || walletState.isConnecting || (isNFT && !isRegistered)}
+                                    disabled={isGenerating || !walletState.isConnected || walletState.isConnecting}
                                     className="w-full"
                                 >
-                                    {isIssuing ? (
+                                    {isGenerating ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Issuing Certificate...
+                                            Generating Certificate...
                                         </>
                                     ) : (
                                         <>
                                             <Upload className="mr-2 h-4 w-4" />
-                                            Issue {isNFT ? "NFT" : ""} Certificate
+                                            Issue Certificate
                                         </>
                                     )}
                                 </Button>
                             </form>
                         </CardContent>
                     </Card>
+
+                    {/* Certificate Preview */}
+                    {previewCert && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Certificate Preview</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3 text-sm">
+                                    <div>
+                                        <span className="font-semibold">Student:</span>{' '}
+                                        <span className="text-muted-foreground">{previewCert.studentName}</span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold">Cohort:</span>{' '}
+                                        <span className="text-muted-foreground">{previewCert.cohort}</span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold">Email:</span>{' '}
+                                        <span className="text-muted-foreground">{previewCert.email}</span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold">Certificate ID:</span>{' '}
+                                        <span className="text-muted-foreground text-xs break-all">{previewCert.certificateId}</span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold">Issue Date:</span>{' '}
+                                        <span className="text-muted-foreground">{previewCert.issueDate.toLocaleDateString()}</span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold">Blockchain TX:</span>{' '}
+                                        <span className="text-muted-foreground text-xs break-all">{previewCert.blockchainTxHash}</span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold">Digital Signature:</span>{' '}
+                                        <span className="text-muted-foreground text-xs break-all">
+                                            {previewCert.digitalSignature.substring(0, 40)}...
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="mt-6 space-y-3">
+                                    <Button
+                                        onClick={handleDownloadPDF}
+                                        className="w-full"
+                                    >
+                                        <Download className="mr-2 h-4 w-4" />
+                                        Download PDF Certificate
+                                    </Button>
+                                    <Button
+                                        onClick={() => setPreviewCert(null)}
+                                        variant="outline"
+                                        className="w-full"
+                                    >
+                                        Clear Preview
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             </div>
         </Layout>
