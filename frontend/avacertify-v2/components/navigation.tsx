@@ -39,10 +39,10 @@ export function Navigation() {
       className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
     >
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Link href="/" className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <Link href="/" className="flex items-center space-x-1 sm:space-x-2">
             <motion.div
-              className="text-2xl font-bold"
+              className="text-lg sm:text-xl md:text-2xl font-bold"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -50,8 +50,8 @@ export function Navigation() {
               <span className="text-yellow-500">&gt;</span>
             </motion.div>
             <div className="flex flex-col">
-              <span className="font-bold text-xl text-dada-orange">Dada Devs</span>
-              <span className="text-xs text-dada-orange/70">Buidl for Africa</span>
+              <span className="font-bold text-sm sm:text-base md:text-xl text-dada-orange">Dada Devs</span>
+              <span className="text-xs text-dada-orange/70 hidden sm:block">Buidl for Africa</span>
             </div>
           </Link>
           <nav className="hidden md:flex space-x-1">
@@ -73,7 +73,7 @@ export function Navigation() {
             ))}
           </nav>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
   {/* Notification Button - Hidden on small screens */}
   <motion.div
     whileHover={{ scale: 1.05 }}
