@@ -26,7 +26,11 @@ interface ContractMethods {
   getCertificate(id: string): Promise<any>;
   verifyCertificate(id: string): Promise<boolean>;
   revokeCertificate(id: string): Promise<ethers.ContractTransactionResponse>;
+  transferCertificate(certificateId: string, recipientAddress: string): Promise<ethers.ContractTransactionResponse>;
   certificates(id: string): Promise<any>;
+  ISSUER_ROLE(): Promise<string>;
+  ADMIN_ROLE(): Promise<string>;
+  hasRole(role: string, account: string): Promise<boolean>;
   // estimateGas: {
   //   issueCertificate(recipientName: string, recipientAddress: string): Promise<bigint>;
   // };
@@ -452,6 +456,28 @@ export class CertificateService {
         throw new Error("Transaction was rejected by user");
       }
       throw new Error(error.reason || error.message || "Failed to revoke certificate");
+    }
+  }
+
+  async transferCertificate(certificateId: string, recipientAddress: string): Promise<boolean> {
+    await this.validateConnection();
+    if (!certificateId?.trim() || !recipientAddress?.trim()) {
+      throw new Error("Certificate ID and recipient address are required");
+    }
+    if (!ethers.isAddress(recipientAddress)) {
+      throw new Error("Invalid recipient address");
+    }
+
+    try {
+      const tx = await this.contract!.transferCertificate(certificateId, recipientAddress);
+      const receipt = await tx.wait();
+      return receipt !== null;
+    } catch (error: any) {
+      console.error("Error transferring certificate:", error);
+      if (error.code === "ACTION_REJECTED") {
+        throw new Error("Transaction was rejected by user");
+      }
+      throw new Error(error.reason || error.message || "Failed to transfer certificate");
     }
   }
 
