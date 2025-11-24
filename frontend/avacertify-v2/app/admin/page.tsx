@@ -320,7 +320,7 @@ export default function AdminPage() {
             const fullCert: CertificateWithSignature = {
                 ...certData,
                 digitalSignature: signature,
-                qrCodeData: `${window.location.origin}/verify/${certId}`,
+                qrCodeData: `${window.location.origin}/verify/certificate?id=${certId}`,
                 isValid: true,
                 blockchainTxHash: blockchainId,
             };
@@ -476,7 +476,7 @@ export default function AdminPage() {
                     const fullCert: CertificateWithSignature = {
                         ...certData,
                         digitalSignature: signature,
-                        qrCodeData: `${window.location.origin}/verify/${certId}`,
+                        qrCodeData: `${window.location.origin}/verify/certificate?id=${certId}`,
                         isValid: true,
                         blockchainTxHash: blockchainId,
                     };
@@ -839,6 +839,11 @@ export default function AdminPage() {
                         <CardContent>
                             <div className="space-y-3">
                                 {(() => {
+                                    // Check if we're on the client side
+                                    if (typeof window === 'undefined') {
+                                        return <p className="text-muted-foreground text-sm">Loading certificates...</p>;
+                                    }
+                                    
                                     const stored = localStorage.getItem('dadaDevsCertificates');
                                     if (!stored) {
                                         return <p className="text-muted-foreground text-sm">No certificates issued yet.</p>;
@@ -868,7 +873,7 @@ export default function AdminPage() {
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
-                                                            onClick={() => window.open(`/verify/${cert.id}`, '_blank')}
+                                                            onClick={() => window.open(`/verify/certificate?id=${cert.id}`, '_blank')}
                                                         >
                                                             Verify
                                                         </Button>

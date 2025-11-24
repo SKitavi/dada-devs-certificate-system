@@ -3,7 +3,7 @@
   base = "frontend/avacertify-v2"
   # Build command (no need for cd since base is set)
   command = "npm ci && npm run build"
-  # Directory to publish (relative to base directory)
+  # Directory to publish (static export)
   publish = "out"
 
 [build.environment]
@@ -12,7 +12,7 @@
   # Node.js version
   NODE_VERSION = "18"
 
-# Redirect rules for Next.js
+# Redirect rules for Next.js static export
 [[redirects]]
   from = "/*"
   to = "/index.html"

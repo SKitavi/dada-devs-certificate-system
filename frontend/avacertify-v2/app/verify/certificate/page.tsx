@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Layout } from '@/components/layout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, XCircle, AlertCircle, Shield, Calendar, User, Mail, Award } from 'lucide-react'
@@ -13,9 +13,9 @@ import {
 
 type VerificationStatus = 'loading' | 'valid' | 'invalid' | 'not-found'
 
-export default function VerifyCertificate() {
-  const params = useParams()
-  const certificateId = params.certificateId as string
+function VerifyCertificateContent() {
+  const searchParams = useSearchParams()
+  const certificateId = searchParams.get('id') || ''
   const [status, setStatus] = useState<VerificationStatus>('loading')
   const [certData, setCertData] = useState<CertificateData | null>(null)
   const [signature, setSignature] = useState<string>('')
@@ -264,5 +264,29 @@ export default function VerifyCertificate() {
         </div>
       </div>
     </Layout>
+  )
+}
+
+export default function VerifyCertificate() {
+  return (
+    <Suspense fallback={
+      <Layout>
+        <div className="container py-12">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="text-4xl font-bold text-center mb-8">
+              Certificate Verification
+            </h1>
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-lg">Loading verification page...</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </Layout>
+    }>
+      <VerifyCertificateContent />
+    </Suspense>
   )
 }

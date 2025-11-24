@@ -67,7 +67,7 @@ export function verifySignature(cert: CertificateData, signature: string): boole
  * Generate QR code as data URL
  */
 export async function generateQRCode(certificateId: string): Promise<string> {
-  const verificationUrl = `${window.location.origin}/verify/${certificateId}`;
+  const verificationUrl = `${window.location.origin}/verify/certificate?id=${certificateId}`;
   try {
     return await QRCode.toDataURL(verificationUrl, {
       width: 200,
