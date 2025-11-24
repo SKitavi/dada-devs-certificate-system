@@ -16,17 +16,25 @@ export default function RecipientDashboard() {
   const [recipientAddress, setRecipientAddress] = useState("");
   const [certificates, setCertificates] = useState<any[]>([]);
 
-  // Check if user is on waitlist
-  const isWaitlisted = localStorage.getItem("isWaitlisted") === "true";
+  // Check if user is on waitlist (client-side only)
+  const [isWaitlisted, setIsWaitlisted] = useState(false);
 
   useEffect(() => {
-    if (!isWaitlisted) {
-      router.push("/");
-      return;
+    // Check waitlist status on client side
+    if (typeof window !== 'undefined') {
+      const waitlistStatus = localStorage.getItem("isWaitlisted") === "true";
+      setIsWaitlisted(waitlistStatus);
+      if (!waitlistStatus) {
+        router.push("/");
+      }
     }
+  }, [router]);
 
-    // Load user's certificates
+  useEffect(() => {
+    // Load user's certificates (only on client side)
     const loadCertificates = async () => {
+      if (typeof window === 'undefined') return;
+      
       try {
         // This would typically fetch certificates for the current user
         const userCertificates = await certificateService.getCertificate("user-certificates");

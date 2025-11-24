@@ -9,8 +9,9 @@ export class IPFSService {
   constructor() {
     this.pinataApiKey = process.env.NEXT_PUBLIC_PINATA_API_KEY || "";
     this.pinataApiSecret = process.env.NEXT_PUBLIC_PINATA_API_SECRET || "";
+    // Don't throw error during build - just log warning
     if (!this.pinataApiKey || !this.pinataApiSecret) {
-      throw new Error("Pinata API credentials not configured");
+      console.warn("Pinata API credentials not configured - IPFS features will be disabled");
     }
   }
 

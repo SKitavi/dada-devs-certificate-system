@@ -6,18 +6,7 @@ import { useToast } from "../hooks/use-toast"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Wallet, ChevronDown } from "lucide-react"
 
-declare global {
-  interface Window {
-    ethereum?: {
-      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-      on: (event: string, handler: (...args: unknown[]) => void) => void;
-      removeListener: (event: string, handler: (...args: unknown[]) => void) => void;
-    }
-    avalanche?: {
-      request: (args: { method: string; params?: unknown[] }) => Promise<string[]>
-    }
-  }
-}
+// Window interface is already declared in blockchain.ts
 
 /**
  * A React component that handles wallet connections for both MetaMask and Core wallets.
@@ -45,16 +34,6 @@ export function WalletConnect() {
         if (accounts.length > 0) {
           setAccount(accounts[0])
           setWalletType("metamask")
-        }
-      } catch (error) {
-        console.error("Failed to get accounts", error)
-      }
-    } else if (typeof window.avalanche !== "undefined") {
-      try {
-        const accounts = await window.avalanche.request({ method: "eth_accounts" })
-        if (accounts.length > 0) {
-          setAccount(accounts[0])
-          setWalletType("core")
         }
       } catch (error) {
         console.error("Failed to get accounts", error)
@@ -101,31 +80,11 @@ export function WalletConnect() {
    * @returns Promise that resolves when Core wallet connection attempt is complete
    */
   const connectCoreWallet = async (): Promise<void> => {
-    if (typeof window.avalanche !== "undefined") {
-      try {
-        await window.avalanche.request({ method: "eth_requestAccounts" })
-        const accounts = await window.avalanche.request({ method: "eth_accounts" })
-        setAccount(accounts[0])
-        setWalletType("core")
-        toast({
-          title: "Wallet Connected",
-          description: "Core wallet connected successfully.",
-        })
-      } catch (error) {
-        console.error("Failed to connect to Core Wallet", error)
-        toast({
-          title: "Connection Failed",
-          description: "Failed to connect to Core Wallet. Please try again.",
-          variant: "destructive",
-        })
-      }
-    } else {
-      toast({
-        title: "Core Wallet Not Found",
-        description: "Please install Core Wallet extension and try again.",
-        variant: "destructive",
-      })
-    }
+    toast({
+      title: "Core Wallet Not Available",
+      description: "Core Wallet support is not implemented in this version.",
+      variant: "destructive",
+    })
   }
 
   /**
