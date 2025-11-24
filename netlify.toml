@@ -1,10 +1,10 @@
 [build]
-  # Build command for the frontend only
-  command = "cd frontend/avacertify-v2 && npm ci && npm run build"
-  # Directory to publish (Next.js static export)
-  publish = "frontend/avacertify-v2/out"
-  # Base directory for build
+  # Base directory for build (Netlify will cd into this automatically)
   base = "frontend/avacertify-v2"
+  # Build command (no need for cd since base is set)
+  command = "npm ci && npm run build"
+  # Directory to publish (relative to base directory)
+  publish = "out"
 
 [build.environment]
   # Enable recursive submodule fetching
