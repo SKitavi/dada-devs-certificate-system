@@ -95,7 +95,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-8 text-center">
-          <p className="text-sm text-foreground/60">© {new Date().getFullYear()} <span className="text-dada-orange font-semibold">Dada Devs</span>. All rights reserved.</p>
+          <p className="text-sm text-foreground/60">© {new Date().getFullYear()} Dada Devs built by <span className="text-dada-orange font-semibold">AvaCertify</span>. All rights reserved.</p>
         </div>
       </div>
     </footer>
