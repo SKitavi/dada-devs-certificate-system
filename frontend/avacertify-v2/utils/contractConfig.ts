@@ -12,8 +12,8 @@ export const AVALANCHE_FUJI_CONFIG = {
 };
 
 // Contract details - REPLACE WITH YOUR ACTUAL DEPLOYED ADDRESSES FROM REMIX
-export const CERTIFICATE_SYSTEM_ADDRESS = "PASTE_YOUR_CERTIFICATE_SYSTEM_ADDRESS_HERE"; // CertificateIssuanceSystem deployed on Fuji testnet
-export const NFT_CERTIFICATE_ADDRESS = "PASTE_YOUR_NFT_CERTIFICATE_ADDRESS_HERE"; // OrganizationNFTCertificate deployed on Fuji testnet
+export const CERTIFICATE_SYSTEM_ADDRESS = "0x6B1c93D5CE36EA700c9d93AF58CC6963FB14Ff30"; // CertificateIssuanceSystem deployed on Fuji testnet
+export const NFT_CERTIFICATE_ADDRESS = "0xfdA44196237f9990630E6fFe9304b6D71Db945eb"; // OrganizationNFTCertificate deployed on Fuji testnet
 
 // Keep the old export for backward compatibility
 export const CONTRACT_ADDRESS = CERTIFICATE_SYSTEM_ADDRESS;
