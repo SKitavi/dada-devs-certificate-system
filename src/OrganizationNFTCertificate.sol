@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
-import "lib/openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "lib/openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "lib/openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
  * @title OrganizationNFTCertificate
