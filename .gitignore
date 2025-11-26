@@ -129,6 +129,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env_rename
+
 .venv
 env/
 venv/
@@ -187,3 +189,9 @@ node_modules
 
 # Hardhat Ignition default folder for deployments against a local node
 ignition/deployments/chain-31337
+
+# Foundry files
+out/
+cache/
+broadcast/
+foundry.lock
