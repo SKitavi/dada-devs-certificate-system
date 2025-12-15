@@ -1,39 +1,6 @@
-# AvaCertify - Certificate Issuance System
+# Dada Devs Digital Certificate Systems
 
-A decentralized certificate issuance and verification system built on Avalanche blockchain using Foundry framework. This system provides secure, tamper-proof, and verifiable digital credentials through smart contracts and a modern web interface.
-
-
-## 🎥 Project Demo and Pitch
-
-https://github.com/I-Macharia/Certificate-Issuance-System/AvaCertify_Pitch.mp4
-
-## 🚀 Deployed Contracts (Avalanche Fuji Testnet)
-
-### Smart Contracts
-- **CertificateIssuanceSystem**: [`0xb90c5B3fE62f463AF697B6bC53ac579b0B2f0F2A`](https://testnet.snowtrace.io/address/0xb90c5B3fE62f463AF697B6bC53ac579b0B2f0F2A)
-  - Main certificate management contract with role-based access control
-  - Supports certificate issuance, revocation, and transfers
-  - Features admin and issuer role management
-
-- **OrganizationNFTCertificate**: [`0xdE5b750ebBc0A92a53614f18081E72609F09BC69`](https://testnet.snowtrace.io/address/0xdE5b750ebBc0A92a53614f18081E72609F09BC69)
-  - NFT-based certificate with organization branding support
-  - ERC721 compliance with custom metadata
-  - Organization registration and branding features
-
-## 🏗️ Architecture
-
-### Frontend (Next.js)
-- **Framework**: Next.js 14 with TypeScript
-- **Styling**: Tailwind CSS with custom components
-- **Blockchain Integration**: Ethers.js v6
-- **UI Components**: Shadcn/ui components
-- **Location**: `frontend/avacertify-v2/`
-
-### Smart Contracts (Foundry)
-- **Framework**: Foundry (Forge, Cast, Anvil)
-- **Language**: Solidity 0.8.26
-- **Dependencies**: OpenZeppelin Contracts v5
-- **Location**: `src/`
+https://dadadevs-certify.netlify.app/
 
 ### Key Features
 - 🔐 **Role-based Access Control**: Admin and Issuer roles with granular permissions
