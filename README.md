@@ -1,519 +1,277 @@
-# Dada Devs Digital Certificate Systems
+# Dada Devs Certificate System
 
-https://dadadevs-certify.netlify.app/
+A comprehensive digital certificate management system with blockchain verification, built for African female Bitcoin developers. Features secure authentication, role-based access control, and decentralized certificate verification.
 
-### Key Features
-- 🔐 **Role-based Access Control**: Admin and Issuer roles with granular permissions
-- 📜 **Certificate Management**: Issue, revoke, transfer, and verify certificates
-- 🎨 **NFT Integration**: Optional NFT minting with organization branding
-- 🌐 **IPFS Storage**: Decentralized metadata and document storage
-- ✅ **Real-time Verification**: Instant on-chain certificate verification
-- 🔒 **Security**: Reentrancy protection and comprehensive access controls
+## 🎯 **System Overview**
 
-## 🛠️ Development Setup
+### **Authentication & Access Control**
+- **JWT-based authentication** with secure password hashing
+- **Role-based access control** (Admin and User roles)
+- **Institution management** with comprehensive profiles
+- **Audit logging** for all authentication events
 
-### Prerequisites
-- **Node.js** v18+ and npm/yarn
-- **Foundry** toolkit for smart contract development
-- **Git** for version control
-- **Metamask** or compatible wallet for blockchain interaction
+### **Blockchain Integration**
+- **Smart contracts** deployed on Avalanche Fuji testnet
+- **Certificate issuance** and verification on-chain
+- **NFT-based certificates** with organization branding
+- **Decentralized verification** system
 
-### Installation
+## 🚀 **Quick Start**
+
+### **Prerequisites**
+- Node.js v18+
+- Git
+- Modern web browser
+
+### **Installation & Setup**
 
 1. **Clone the repository:**
    ```bash
    git clone <repository-url>
-   cd Certificate-Issuance-System
+   cd dada-devs-certificate-system
    ```
 
-2. **Install Foundry dependencies:**
+2. **Backend Setup:**
    ```bash
-   forge install
+   cd backend
+   npm install
+   cp .env.example .env
+   # Edit .env with your configuration
+   npm run db:generate
+   npm run db:push
+   npm run db:seed
+   npm run dev
    ```
 
-3. **Install frontend dependencies:**
+3. **Frontend Setup:**
    ```bash
    cd frontend/avacertify-v2
    npm install
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+   npm run dev
    ```
 
-4. **Environment Configuration:**
-   ```bash
-   # Root directory - Copy and configure
-   cp .env.example .env
-   
-   # Add your private key and RPC URLs
-   PRIVATE_KEY=your_private_key_here
-   AVALANCHE_FUJI_RPC=https://api.avax-test.network/ext/bc/C/rpc
-   ```
+4. **Access the Application:**
+   - **Frontend**: http://localhost:3000
+   - **Backend API**: http://localhost:3001
 
-## 🧪 Testing & Development
+## 🔑 **Test Credentials**
 
-### Smart Contract Testing
-```bash
-# Run all tests
-forge test
+- **Admin User**: admin@dadadevs.org / admin123
+- **Regular User**: student@example.com / user123
 
-# Run tests with verbose output
-forge test -vvv
+## 🏗️ **System Architecture**
 
-# Run specific test file
-forge test --match-path test/CertificateIssuanceSystem.t.sol
+### **Backend (Express.js + TypeScript)**
+- **Authentication API** with JWT tokens
+- **Institution management** CRUD operations
+- **SQLite database** with Prisma ORM
+- **Comprehensive audit logging**
 
-# Generate gas report
-forge test --gas-report
+### **Frontend (Next.js 15 + TypeScript)**
+- **Role-aware navigation** system
+- **Authentication flows** (login/signup)
+- **Institution profile management**
+- **Responsive design** with Tailwind CSS
+
+### **Smart Contracts (Solidity + Foundry)**
+- **Certificate issuance** system
+- **NFT-based certificates** with metadata
+- **Role-based access control**
+- **Deployed on Avalanche Fuji**
+
+## 🎯 **User Flows**
+
+### **Guest Users**
+```
+Home Page → Sign Up/Login → Authentication → Role-based Redirect
 ```
 
-### Frontend Development
+### **Regular Users (Students)**
+```
+Login → Profile → Complete Profile → Verify Certificates
+```
+
+### **Admin Users (Dada Devs Officials)**
+```
+Login → Admin Dashboard → Institution Management → Full System Access
+```
+
+## 📋 **Key Features**
+
+### **Authentication System**
+- ✅ Secure JWT-based authentication
+- ✅ Password hashing with bcrypt
+- ✅ Email verification system
+- ✅ Role-based access control
+- ✅ Authentication event logging
+
+### **Institution Management**
+- ✅ Comprehensive institution profiles
+- ✅ Document management system
+- ✅ User association and permissions
+- ✅ Verification status tracking
+
+### **User Experience**
+- ✅ Fast login redirections
+- ✅ Role-appropriate navigation
+- ✅ Automatic page protection
+- ✅ Responsive design
+
+### **Security Features**
+- ✅ Input validation and sanitization
+- ✅ CORS protection
+- ✅ Secure headers with Helmet
+- ✅ Comprehensive error handling
+
+
+## 🎥 Project Demo and Pitch
+
+https://github.com/I-Macharia/Certificate-Issuance-System/AvaCertify_Pitch.mp4
+
+## 🚀 **Deployed Contracts (Avalanche Fuji Testnet)**
+
+### **Smart Contracts**
+- **CertificateIssuanceSystem**: [`0x6B1c93D5CE36EA700c9d93AF58CC6963FB14Ff30`](https://testnet.snowtrace.io/address/0x6B1c93D5CE36EA700c9d93AF58CC6963FB14Ff30)
+- **OrganizationNFTCertificate**: [`0xfdA44196237f9990630E6fFe9304b6D71Db945eb`](https://testnet.snowtrace.io/address/0xfdA44196237f9990630E6fFe9304b6D71Db945eb)
+
+## 🗄️ **Database Schema**
+
+### **Users Table**
+- Authentication and profile management
+- Role-based access control (USER/ADMIN)
+- Institution associations
+- Email verification tracking
+
+### **Institutions Table**
+- Comprehensive organization profiles
+- Contact information and verification status
+- Document management capabilities
+- User associations and permissions
+
+### **Authentication Logs**
+- Complete audit trail of authentication events
+- IP address and user agent tracking
+- Security monitoring and analysis
+
+## 🛠️ **Development**
+
+### **API Endpoints**
+
+#### **Authentication (`/api/auth/`)**
+- `POST /signup` - User registration
+- `POST /login` - User authentication  
+- `POST /logout` - Secure logout
+- `GET /me` - Get current user profile
+- `PUT /profile` - Update user profile
+- `POST /verify-email` - Email verification
+- `GET /logs` - Authentication audit logs (admin only)
+
+#### **Institutions (`/api/institutions/`)**
+- `POST /` - Create institution (admin only)
+- `GET /` - List institutions
+- `GET /:id` - Get institution details
+- `PUT /:id` - Update institution
+- `DELETE /:id` - Delete institution (admin only)
+- `POST /:id/documents` - Add document
+- `DELETE /:id/documents/:docId` - Remove document
+
+### **Testing**
+
+#### **Backend Testing**
+```bash
+cd backend
+npm test
+```
+
+#### **Frontend Testing**
 ```bash
 cd frontend/avacertify-v2
-npm run dev
+npm test
 ```
 
-### Local Blockchain Development
+#### **Smart Contract Testing**
 ```bash
-# Start local Anvil chain
-anvil
-
-# Deploy to local chain
-forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --private-key <your-key> --broadcast
-```
-
-## 🚀 Setup Instructions for the Backend
-
-
-### Set up Firebase Configuration
-
-In `app/firebase.ts`, add your Firebase credentials:
-
-```env
-REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
-REACT_APP_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-REACT_APP_FIREBASE_PROJECT_ID=your_firebase_project_id
-REACT_APP_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
-REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
-REACT_APP_FIREBASE_APP_ID=your_firebase_app_id
-4. **Environment Configuration:**
-   ```bash
-   # Root directory - Copy and configure
-   cp .env.example .env
-   
-   # Add your private key and RPC URLs
-   PRIVATE_KEY=your_private_key_here
-   AVALANCHE_FUJI_RPC=https://api.avax-test.network/ext/bc/C/rpc
-   ```
-
-## 🧪 Testing & Development
-
-### Smart Contract Testing
-```bash
-# Run all tests
 forge test
-
-# Run tests with verbose output
-forge test -vvv
-
-# Run specific test file
-forge test --match-path test/CertificateIssuanceSystem.t.sol
-
-# Generate gas report
-forge test --gas-report
+forge test -vvv  # verbose output
+forge coverage   # coverage report
 ```
 
-### Frontend Development
-```bash
-cd frontend/avacertify-v2
-npm run dev
-```
-
-### Local Blockchain Development
-```bash
-# Start local Anvil chain
-anvil
-
-# Deploy to local chain
-forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --private-key <your-key> --broadcast
-```
-
-## 📋 Usage Guide
-
-### For Certificate Issuers
-1. **Access Admin Panel**: Navigate to `/admin` (requires admin wallet)
-2. **Issue Certificate**: Fill recipient details and certificate metadata
-3. **Manage Roles**: Grant issuer permissions to authorized users
-4. **Verify Certificates**: Use built-in verification tools
-
-### For Certificate Recipients
-1. **View Certificates**: Access personal dashboard to view owned certificates
-2. **Share Verification**: Generate shareable verification links
-3. **Transfer Certificates**: Move certificates to different wallet addresses
-4. **Download Metadata**: Access IPFS-stored certificate documents
-
-### Smart Contract Interaction
-```solidity
-// Issue a new certificate
-function issueCertificate(
-    string calldata recipientName,
-    address recipientAddress
-) external onlyRole(ISSUER_ROLE);
-
-// Verify certificate validity
-function verifyCertificate(uint256 tokenId) external view returns (bool);
-
-// Revoke certificate (admin only)
-function revokeCertificate(uint256 tokenId) external onlyRole(DEFAULT_ADMIN_ROLE);
-```
-
-## 🔧 Configuration
-
-### Contract Configuration
-Key settings in `src/CertificateIssuanceSystem.sol`:
-- Role management for admin and issuer permissions
-- Certificate metadata structure
-- Transfer and revocation policies
-
-### Frontend Configuration
-Located in `frontend/avacertify-v2/utils/contractConfig.ts`:
-```typescript
-export const CONTRACT_ADDRESSES = {
-  CERTIFICATE_SYSTEM: "0x9213c9e46e950dcb316ba35126f39299bb0ecaaa",
-  NFT_CERTIFICATE: "0xdE5b750ebBc0A92a53614f18081E72609F09BC69"
-};
-```
-
-## 🚀 Deployment
-
-### Avalanche Fuji Testnet Deployment
-The contracts are deployed and verified on Avalanche Fuji testnet:
-
-```bash
-# Deploy script used
-forge script script/Deploy.s.sol --rpc-url $AVALANCHE_FUJI_RPC --private-key $PRIVATE_KEY --broadcast --verify
-
-# Verification command
-forge verify-contract --chain-id 43113 --watch <CONTRACT_ADDRESS> <CONTRACT_NAME>
-```
-
-### Custom Deployment
-```bash
-# Deploy to different network
-forge script script/Deploy.s.sol --rpc-url <YOUR_RPC_URL> --private-key <YOUR_PRIVATE_KEY> --broadcast
-
-# Update frontend configuration
-# Edit frontend/avacertify-v2/utils/contractConfig.ts with new addresses
-```
-
-## 📋 Usage Guide
-
-### For Certificate Issuers
-1. **Access Admin Panel**: Navigate to `/admin` (requires admin wallet)
-2. **Issue Certificate**: Fill recipient details and certificate metadata
-3. **Manage Roles**: Grant issuer permissions to authorized users
-4. **Verify Certificates**: Use built-in verification tools
-
-### For Certificate Recipients
-1. **View Certificates**: Access personal dashboard to view owned certificates
-2. **Share Verification**: Generate shareable verification links
-3. **Transfer Certificates**: Move certificates to different wallet addresses
-4. **Download Metadata**: Access IPFS-stored certificate documents
-
-### Smart Contract Interaction
-```solidity
-// Issue a new certificate
-function issueCertificate(
-    string calldata recipientName,
-    address recipientAddress
-) external onlyRole(ISSUER_ROLE);
-
-// Verify certificate validity
-function verifyCertificate(uint256 tokenId) external view returns (bool);
-
-// Revoke certificate (admin only)
-function revokeCertificate(uint256 tokenId) external onlyRole(DEFAULT_ADMIN_ROLE);
-```
-
-## 🔧 Configuration
-
-### Contract Configuration
-Key settings in `src/CertificateIssuanceSystem.sol`:
-- Role management for admin and issuer permissions
-- Certificate metadata structure
-- Transfer and revocation policies
-
-### Frontend Configuration
-Located in `frontend/avacertify-v2/utils/contractConfig.ts`:
-```typescript
-export const CONTRACT_ADDRESSES = {
-  CERTIFICATE_SYSTEM: "0x9213c9e46e950dcb316ba35126f39299bb0ecaaa",
-  NFT_CERTIFICATE: "0xdE5b750ebBc0A92a53614f18081E72609F09BC69"
-};
-```
-
-## 🚀 Deployment
-
-### Avalanche Fuji Testnet Deployment
-The contracts are deployed and verified on Avalanche Fuji testnet:
-
-```bash
-# Deploy script used
-forge script script/Deploy.s.sol --rpc-url $AVALANCHE_FUJI_RPC --private-key $PRIVATE_KEY --broadcast --verify
-
-# Verification command
-forge verify-contract --chain-id 43113 --watch <CONTRACT_ADDRESS> <CONTRACT_NAME>
-```
-
-### Custom Deployment
-```bash
-# Deploy to different network
-forge script script/Deploy.s.sol --rpc-url <YOUR_RPC_URL> --private-key <YOUR_PRIVATE_KEY> --broadcast
-
-# Update frontend configuration
-# Edit frontend/avacertify-v2/utils/contractConfig.ts with new addresses
-```
-
-## 📊 Project Structure
+## 📊 **Project Structure**
 
 ```
-Certificate-Issuance-System/
-├── src/                          # Smart contracts
-│   ├── CertificateIssuanceSystem.sol
-│   └── OrganizationNFTCertificate.sol
-├── script/                       # Deployment scripts
-│   └── Deploy.s.sol
-├── test/                         # Contract tests
-│   ├── CertificateIssuanceSystem.t.sol
-│   └── OrganizationNFTCertificate.t.sol
-├── frontend/avacertify-v2/       # Next.js application
-│   ├── app/                      # Next.js 14 app router
-│   ├── components/               # React components
-│   ├── utils/                    # Utilities and config
-│   └── services/                 # Blockchain services
-├── foundry.toml                  # Foundry configuration
-└── README.md                     # This file
+dada-devs-certificate-system/
+├── backend/                      # Express.js API server
+│   ├── src/
+│   │   ├── controllers/         # API controllers
+│   │   ├── middleware/          # Auth & security middleware
+│   │   ├── routes/             # API routes
+│   │   ├── services/           # Business logic
+│   │   └── utils/              # Utilities
+│   ├── prisma/                 # Database schema & migrations
+│   └── package.json
+├── frontend/avacertify-v2/      # Next.js application
+│   ├── app/                    # Next.js 15 app router
+│   ├── components/             # React components
+│   ├── contexts/               # React contexts
+│   ├── hooks/                  # Custom hooks
+│   └── utils/                  # Utilities
+├── src/                        # Smart contracts
+├── script/                     # Deployment scripts
+├── test/                       # Contract tests
+└── foundry.toml               # Foundry configuration
 ```
 
-## 🤝 Contributing
+## 🤝 **Contributing**
 
-We love your input! We want to make contributing to AvaCertify as easy and transparent as possible, whether it's:
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feat/amazing-feature`
+3. **Commit changes**: `git commit -m 'feat: add amazing feature'`
+4. **Push to branch**: `git push origin feat/amazing-feature`
+5. **Open a Pull Request**
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+### **Development Guidelines**
+- Follow TypeScript best practices
+- Add tests for new features
+- Update documentation
+- Use conventional commit messages
+- Maintain code coverage above 80%
 
-### Development Process
+## 🔐 **Security**
 
-1. **Fork the Repository**
-2. **Clone your Fork**
-   ```bash
-   git clone https://github.com/your-username/Certificate-Issuance-System.git
-   cd Certificate-Issuance-System
-   ```
+- **JWT authentication** with secure token management
+- **Password hashing** with bcrypt (12 rounds)
+- **Input validation** with Joi schemas
+- **CORS protection** and security headers
+- **Audit logging** for security monitoring
+- **Role-based access control** throughout the system
 
-3. **Create a Branch**
-   ```bash
-   # Name your branch based on the type of contribution
-   git checkout -b feat/amazing-feature     # for features
-   git checkout -b fix/bug-description      # for bug fixes
-   git checkout -b docs/documentation-name  # for documentation
-   git checkout -b test/test-description   # for tests
-   ```
-
-4. **Make your Changes**
-   - Write meaningful, clean, and testable code
-   - Follow the coding standards and guidelines
-   - Keep your changes focused and atomic
-
-5. **Commit your Changes**
-   ```bash
-   # Use conventional commit messages
-   git commit -m "feat: add amazing feature"
-   git commit -m "fix: resolve issue with certificate validation"
-   git commit -m "docs: update deployment instructions"
-   git commit -m "test: add tests for certificate issuance"
-   ```
-
-   Commit Message Format:
-   ```
-   <type>(<scope>): <subject>
-
-   <body>
-
-   <footer>
-   ```
-   
-   Types:
-   - `feat`: New feature
-   - `fix`: Bug fix
-   - `docs`: Documentation changes
-   - `style`: Code style changes (formatting, missing semicolons, etc)
-   - `refactor`: Code refactoring
-   - `test`: Adding missing tests
-   - `chore`: Maintenance tasks
-
-6. **Run Tests**
-   ```bash
-   # Smart Contracts
-   forge test
-   forge coverage
-
-   # Frontend
-   cd frontend/avacertify-v2
-   npm run test
-   ```
-
-7. **Push to your Fork**
-   ```bash
-   git push origin your-branch-name
-   ```
-
-8. **Open a Pull Request**
-   - Provide a clear title and description
-   - Link any relevant issues
-   - Include screenshots/videos for UI changes
-   - Update documentation if needed
-
-### Development Guidelines
-
-#### Smart Contracts
-- Follow [Solidity Style Guide](https://docs.soliditylang.org/en/latest/style-guide.html)
-- Add NatSpec comments for all public functions
-- Maintain test coverage above 90%
-- Use OpenZeppelin contracts when possible
-- Add events for important state changes
-- Document all state variables
-
-#### Frontend
-- Use TypeScript for all new code
-- Follow React hooks best practices
-- Maintain consistent component structure
-- Use shadcn/ui component patterns
-- Add proper error handling
-- Keep components small and focused
-
-#### Testing
-- Write unit tests for all new features
-- Include integration tests for complex flows
-- Test edge cases and error conditions
-- Document test scenarios
-- Update test documentation
-
-#### Documentation
-- Update README for new features
-- Add JSDoc comments for TypeScript code
-- Document environment variables
-- Include setup steps for new features
-- Add inline comments for complex logic
-
-#### Pull Request Checklist
-- [ ] Tests added/updated and passing
-- [ ] Documentation updated
-- [ ] Code follows style guidelines
-- [ ] Self-review completed
-- [ ] No unnecessary dependencies added
-- [ ] No sensitive information included
-- [ ] Commit messages follow convention
-
-## 🔐 Security
-
-- All contracts use OpenZeppelin security patterns
-- Role-based access control implemented
-- Reentrancy guards on critical functions
-- Comprehensive test coverage
-- Regular security audits recommended
-
-### Reporting Security Issues
-Please report security vulnerabilities to the development team through secure channels.
-
-## 📄 License
+## 📄 **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 👥 **Team Members**
 
-- **Avalanche Network** for robust blockchain infrastructure
-- **OpenZeppelin** for security-audited contract libraries
-- **Foundry** for modern Solidity development tools
-- **Next.js** for React framework excellence
-- **Tailwind CSS** for utility-first styling
+- **Ian Macharia** - Smart Contract Developer - macharia.gichoya@gmail.com
+- **Sharon Kitavi** - Backend Developer - sharonkmwikali@gmail.com
+- **Farhiya Omar** - Backend Developer - farhiyaomar24@gmail.com
+- **Salma Adam** - Smart Contract Developer - salmaadambakari@gmail.com
+- **Linet Mugwanja** - Frontend Developer - mugwanjalk@gmail.com
+- **Stan** - Backend Developer - e.n.ndegwa00@gmail.com
+- **Truth** - Frontend Developer - trutherkadi@gmail.com
 
-## 📞 Support & Community
+## 🙏 **Acknowledgments**
 
-- **GitHub Issues**: Report bugs and feature requests
-- **Documentation**: Comprehensive guides in `/docs`
-- **Community**: Join our Discord/Telegram for discussions
-
----
-
-**Built with ❤️ for secure, decentralized credential management**
-## 🔧 Project Structure
-
-### Frontend (Next.js)
-
-- **Components:** Reusable UI components (`/components` directory).
-- **Pages:** Main entry points for the application (`/pages` directory).
-- **Public Assets:** Static files such as images (`/public` directory).
-- **Styles:** Global styles (`/styles` directory).
-- **TypeScript Config:** Compiler options in `tsconfig.json`.
-- **Package Config:** Dependencies and scripts in `package.json`.
-
-### Backend
-
-- **App Entry Point:** Server logic in `src/app.ts`.
-- **Type Definitions:** Shared types/interfaces in `src/types/index.ts`.
-- **Database:** Firebase integration for user profiles and waitlist.
-
-## 🏗️ Getting Started
-
-### Frontend Setup:
-
-```sh
- cd frontend
- npm install
- npm run dev
-```
-
-### Backend Setup:
-
-```sh
- cd backend
- npm install
- npm start
-```
-
-
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
-## 👥 Team Members
-
-- **Ian Macharia** - Smart Contract Developer  macharia.gichoya@gmail.com
-- **Sharon Kitavi** - Backend Developer  -sharonkmwikali@gmail.com
-- **Farhiya Omar** - Backend Developer  -farhiyaomar24@gmail.com
-- **Salma Adam** - Smart Contract Developer  -salmaadambakari@gmail.com
-- **Linet Mugwanja** - Frontend Developer  -mugwanjalk@gmail.com
-- **Stan** - Backend Developer             -e.n.ndegwa00@gmail.com
-- **Truth** - Frontend Developer  trutherkadi@gmail.com
-
-## 📢 Additional Resources
-
-🔗 [Pitch Deck](https://gamma.app/docs/AvaCertify-Revolutionizing-Credential-Management--ctdoowmvbvdevl2?mode=doc)
-🔗 [Pitch Deck]([https://drive.google.com/file/d/1G2SWkM36Go3ImLoS5zosMxQxY2-vcMPV/view?usp=drivesdk](https://gamma.app/docs/AvaCertify-Revolutionizing-Credential-Management--ctdoowmvbvdevl2?mode=doc )
-
-## ⭐ Next Steps
-
-- **Enhance UI/UX:** Improve the frontend for a better user experience.
-- **Smart Contract Audit:** Conduct a security audit for robustness.
-- **Multi-Chain Deployment:** Expand to other blockchain networks.{not decided}
-- **Automated Issuance:** AI-powered bulk certificate issuance.
-- **Mobile App Development:** Build a mobile-friendly version.
-- **Institutional Partnerships:** Collaborate with universities and certification bodies.
-- **Community Engagement:** Grow developer and user adoption.
+- **Avalanche Network** for blockchain infrastructure
+- **OpenZeppelin** for security-audited contracts
+- **Foundry** for Solidity development tools
+- **Next.js** for React framework
+- **Prisma** for database management
 
 ---
+
+**Built with ❤️ for Africa's first pipeline of female Bitcoin developers**
 
 
 
