@@ -1,6 +1,10 @@
 "use client"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Layout } from "@/components/layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAuth } from "@/hooks/useAuth"
+import { motion } from "framer-motion"
 import dynamic from 'next/dynamic'
 
 // Dynamically import icons
@@ -9,6 +13,52 @@ const Zap = dynamic(() => import('lucide-react').then(mod => mod.Zap))
 const Globe = dynamic(() => import('lucide-react').then(mod => mod.Globe))
 
 export default function About() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  // Redirect authenticated users to their appropriate dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      if (user.role === 'ADMIN') {
+        router.replace('/admin')
+      } else {
+        router.replace('/profile')
+      }
+    }
+  }, [user, loading, router])
+
+  // Show loading or redirect for authenticated users
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    )
+  }
+
+  // If user is authenticated, show redirecting message
+  if (user) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"
+            />
+            <p className="text-lg font-medium text-primary">
+              Redirecting to {user.role === 'ADMIN' ? 'Admin Dashboard' : 'Profile'}...
+            </p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  // Show about page only for guests
   return (
     <Layout>
       <div className="container py-10">

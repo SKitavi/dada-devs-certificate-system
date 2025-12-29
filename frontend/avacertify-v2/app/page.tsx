@@ -1,10 +1,14 @@
 "use client"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Layout } from "@/components/layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowRight, Shield, Eye, CheckCircle, Clock, FileX } from "lucide-react"
+import { ArrowRight, Shield, Eye, CheckCircle, Clock, FileX, UserPlus, LogIn } from "lucide-react"
 import Link from "next/link"
 import type { ComponentProps } from "@/types/custom"
+import { useAuth } from "@/hooks/useAuth"
+import { motion } from "framer-motion"
 
 const FeatureCard = ({ icon: Icon, title, description }: ComponentProps) => (
   <Card className="group hover:shadow-lg transition-all duration-300 dark:hover:shadow-primary/5">
@@ -17,6 +21,52 @@ const FeatureCard = ({ icon: Icon, title, description }: ComponentProps) => (
 )
 
 export default function Home() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
+
+  // Redirect authenticated users to their appropriate dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      if (user.role === 'ADMIN') {
+        router.replace('/admin')
+      } else {
+        router.replace('/profile')
+      }
+    }
+  }, [user, loading, router])
+
+  // Show loading or redirect for authenticated users
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </Layout>
+    )
+  }
+
+  // If user is authenticated, show redirecting message
+  if (user) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"
+            />
+            <p className="text-lg font-medium text-primary">
+              Redirecting to {user.role === 'ADMIN' ? 'Admin Dashboard' : 'Profile'}...
+            </p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  // Show home page only for guests
   return (
     <Layout>
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/5 py-20 sm:py-32">
@@ -32,23 +82,52 @@ export default function Home() {
               Secure, blockchain-verified digital credentials for African female Bitcoin developers
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button asChild size="lg" className="rounded-full">
-                <Link href="/dashboard">Get Started</Link>
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button asChild size="lg" className="rounded-full">
+                  <Link href="/signup">
+                    <UserPlus className="mr-2 h-5 w-5" />
+                    Sign Up
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="secondary"
+                  className="rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-primary"
+                >
+                  <Link href="/login">
+                    <LogIn className="mr-2 h-5 w-5" />
+                    Log In
+                  </Link>
+                </Button>
+              </motion.div>
               <Button
                 asChild
                 size="lg"
-                variant="secondary"
-                className="rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-primary"
+                variant="outline"
+                className="rounded-full"
               >
                 <Link href="/about">Learn More</Link>
               </Button>
             </div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-8 p-4 bg-primary/5 rounded-lg border border-primary/20"
+            >
+              <p className="text-sm text-muted-foreground">
+                Join Africa's first pipeline of female Bitcoin developers and earn verified credentials
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-  <section id="features" className="py-20">
+      <section id="features" className="py-20">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold mb-12 bg-gradient-to-r from-dada-orange to-yellow-500 bg-clip-text text-transparent">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -71,7 +150,7 @@ export default function Home() {
         </div>
       </section>
 
-  <section id="problem" className="py-20 bg-gradient-to-br from-primary/10 to-secondary/5">
+      <section id="problem" className="py-20 bg-gradient-to-br from-primary/10 to-secondary/5">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold mb-12 text-white">The Problem We Solve</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -115,12 +194,19 @@ export default function Home() {
             <p className="text-xl text-muted-foreground mb-8">
               Join Africa's first pipeline of female Bitcoin developers and earn verified credentials.
             </p>
-            <Button asChild size="lg" className="rounded-full group">
-              <Link href="/dashboard">
-                Launch Dashboard
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
+            <div className="flex items-center justify-center gap-4">
+              <Button asChild size="lg" className="rounded-full group">
+                <Link href="/signup">
+                  Get Started
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-full">
+                <Link href="/login">
+                  Sign In
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
