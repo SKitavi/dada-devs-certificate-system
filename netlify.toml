@@ -1,24 +1,28 @@
 [build]
-  # Base directory for build (Netlify will cd into this automatically)
   base = "frontend/avacertify-v2"
-  # Build command (no need for cd since base is set)
   command = "npm ci && npm run build"
-  # Directory to publish (static export)
   publish = "out"
 
 [build.environment]
-  # Enable recursive submodule fetching
-  GIT_SUBMODULE_STRATEGY = "recursive"
-  # Node.js version
   NODE_VERSION = "18"
+  GIT_SUBMODULE_STRATEGY = "recursive"
 
-# Redirect rules for Next.js static export
+[functions]
+  directory = "../../netlify/functions"
+  node_bundler = "esbuild"
+
+# API redirects - MUST come before catch-all
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Next.js catch-all - MUST come after API redirects
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Headers for security
 [[headers]]
   for = "/*"
   [headers.values]

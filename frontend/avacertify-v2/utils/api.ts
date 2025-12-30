@@ -1,7 +1,9 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+// For Netlify deployment, use relative URLs to call Netlify Functions
+// In development, you can use localhost or keep this as relative
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api'
 
 // Create axios instance
 const api = axios.create({
@@ -39,7 +41,7 @@ api.interceptors.response.use(
   }
 )
 
-// Auth API functions
+// Auth API functions - Updated endpoints for Netlify Functions
 export const authAPI = {
   signup: (data: {
     email: string
@@ -47,33 +49,33 @@ export const authAPI = {
     firstName?: string
     lastName?: string
     institutionId?: string
-  }) => api.post('/auth/signup', data),
+  }) => api.post('/signup', data),
 
   login: (data: { email: string; password: string }) =>
-    api.post('/auth/login', data),
+    api.post('/login', data),
 
-  logout: () => api.post('/auth/logout'),
+  logout: () => api.post('/logout'),
 
-  me: () => api.get('/auth/me'),
+  me: () => api.get('/me'),
 
   updateProfile: (data: {
     firstName?: string
     lastName?: string
     institutionId?: string
-  }) => api.put('/auth/profile', data),
+  }) => api.put('/update-profile', data),
 
   verifyEmail: (token: string) =>
-    api.post('/auth/verify-email', { token }),
+    api.post('/verify-email', { token }),
 
   getAuthLogs: (params?: {
     page?: number
     limit?: number
     event?: string
     userId?: string
-  }) => api.get('/auth/logs', { params }),
+  }) => api.get('/auth-logs', { params }),
 }
 
-// Institution API functions
+// Institution API functions - You'll need to create these Netlify functions too
 export const institutionAPI = {
   create: (data: any) => api.post('/institutions', data),
 
