@@ -1,9 +1,9 @@
 import type { Handler } from "@netlify/functions";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
 // Import Prisma from backend
-const { PrismaClient } = require("../../backend/node_modules/@prisma/client");
 const prisma = new PrismaClient();
 
 export const handler: Handler = async (event) => {

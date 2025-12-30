@@ -1,8 +1,6 @@
 import type { Handler } from "@netlify/functions";
 import jwt from "jsonwebtoken";
-
-const { PrismaClient } = require("../../backend/node_modules/@prisma/client");
-const prisma = new PrismaClient();
+import { PrismaClient } from "@prisma/client";
 
 export const handler: Handler = async (event) => {
   const headers = {
