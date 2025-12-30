@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  password          String
+  firstName         String?
+  lastName          String?
+  role              String   @default("USER") // "USER" or "ADMIN"
+  emailVerified     Boolean  @default(false)
+  emailVerifyToken  String?
+  profileCompleted  Boolean  @default(false)
+  institutionId     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  institution       Institution? @relation(fields: [institutionId], references: [id])
+  authLogs          AuthenticationLog[]
+
+  @@map("users")
+}
+
+model Institution {
+  id                    String   @id @default(cuid())
+  slug                  String   @unique
+  name                  String
+  registrationNumber    String?
+  accreditationStatus   String?
+  addressLine1          String?
+  addressLine2          String?
+  city                  String?
+  state                 String?
+  country               String?
+  postalCode            String?
+  contactPersonName     String?
+  contactPersonRole     String?
+  contactEmail          String?
+  contactPhone          String?
+  website               String?
+  logoUrl               String?
+  verificationStatus    String   @default("pending")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  users                 User[]
+  documents             InstitutionDocument[]
+
+  @@map("institutions")
+}
+
+model InstitutionDocument {
+  id            String      @id @default(cuid())
+  institutionId String
+  name          String
+  type          String
+  url           String
+  uploadedAt    DateTime    @default(now())
+
+  // Relations
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  @@map("institution_documents")
+}
+
+model AuthenticationLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  event     String   // signup, login_success, login_failure, logout, password_reset
+  ipAddress String?
+  userAgent String?
+  metadata  String?  // JSON string for additional data
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("authentication_logs")
+}
